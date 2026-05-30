@@ -26,6 +26,8 @@ const classificationSchema = z.object({
   doc_type: z.enum(DOC_TYPES),
   confidence: z.number().min(0).max(1),
   rationale: z.string(),
+  // Detected language as a BCP 47 / ISO 639-1 code (e.g. "en", "fr", "zh", "it").
+  language: z.string().min(2).max(8),
   tags: z.array(z.string()),
   entities: z.array(
     z.object({
@@ -65,8 +67,10 @@ export async function classifyAndExtract(db: SupabaseClient, ctx: ExtractContext
     model: "haiku",
     schema: classificationSchema,
     system:
-      "You are a regulatory affairs analyst classifying pharmaceutical/biotech documents. " +
-      "Identify the document type, key tags, and named entities (molecules, studies, trials, endpoints, indications).",
+      "You are a regulatory affairs analyst classifying pharmaceutical/biotech documents written in any language " +
+      "(English, French, Italian, Chinese, etc.). Identify the document type, the primary language (as an ISO 639-1 code), " +
+      "key tags, and named entities (molecules, studies, trials, endpoints, indications). Tags and entity names should be returned " +
+      "in their original language as they appear in the document.",
     prompt: `Document title: "${ctx.title}"\n\nContent:\n${text}`,
     toolName: "classify_document",
     maxTokens: 1500,
@@ -74,7 +78,7 @@ export async function classifyAndExtract(db: SupabaseClient, ctx: ExtractContext
 
   await db
     .from("documents")
-    .update({ doc_type: cls.doc_type, doc_type_confidence: cls.confidence })
+    .update({ doc_type: cls.doc_type, doc_type_confidence: cls.confidence, language: cls.language.toLowerCase() })
     .eq("id", ctx.documentId);
 
   // Tags (cap defensively — models don't always honor maxItems)

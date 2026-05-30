@@ -87,6 +87,7 @@ export interface DocumentRow {
   page_count: number;
   doc_type: DocType;
   doc_type_confidence: number | null;
+  language: string | null;
   status: DocStatus;
   content_hash: string | null;
   error: string | null;

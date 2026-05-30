@@ -41,7 +41,9 @@ export async function uploadDocuments(formData: FormData) {
       .single();
     if (error || !doc) throw new Error(error?.message ?? "Failed to create document");
 
-    const path = `${ctx.org.id}/${doc.id}/${file.name}`;
+    // Supabase storage keys must be ASCII; preserve the user's original filename on the row.
+    const ext = file.name.match(/\.[^.]+$/)?.[0] ?? "";
+    const path = `${ctx.org.id}/${doc.id}/source${ext}`;
     const { error: upErr } = await admin.storage
       .from("documents")
       .upload(path, bytes, { contentType: file.type || undefined, upsert: true });

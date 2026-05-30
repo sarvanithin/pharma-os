@@ -73,6 +73,7 @@ export default async function DocumentDetail({
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary">{titleCase(doc.doc_type)}</Badge>
+          {doc.language && <Badge variant="muted">{String(doc.language).toUpperCase()}</Badge>}
           <StatusBadge status={doc.status} />
         </div>
       </div>

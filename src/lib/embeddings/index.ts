@@ -35,17 +35,25 @@ export const voyageEmbedder: Embedder = {
     // Voyage accepts batches; keep them modest to stay under payload limits.
     for (let i = 0; i < texts.length; i += 128) {
       const batch = texts.slice(i, i + 128);
-      const res = await fetch(`${VOYAGE_URL}/embeddings`, {
-        method: "POST",
-        headers: voyageHeaders(),
-        body: JSON.stringify({
-          model: EMBEDDING_MODEL,
-          input: batch,
-          input_type: inputType,
-          output_dimension: EMBEDDING_DIM,
-        }),
-      });
-      if (!res.ok) throw new Error(`Voyage embed failed: ${res.status} ${await res.text()}`);
+      // Retry-on-429 lets free-tier rate limits (3 RPM) self-throttle without crashing the pipeline.
+      let res: Response | null = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        res = await fetch(`${VOYAGE_URL}/embeddings`, {
+          method: "POST",
+          headers: voyageHeaders(),
+          body: JSON.stringify({
+            model: EMBEDDING_MODEL,
+            input: batch,
+            input_type: inputType,
+            output_dimension: EMBEDDING_DIM,
+          }),
+        });
+        if (res.status !== 429) break;
+        await new Promise((r) => setTimeout(r, 25_000 * (attempt + 1)));
+      }
+      if (!res || !res.ok) {
+        throw new Error(`Voyage embed failed: ${res?.status ?? "no response"} ${res ? await res.text() : ""}`);
+      }
       const json = (await res.json()) as { data: { embedding: number[] }[] };
       out.push(...json.data.map((d) => d.embedding));
     }
