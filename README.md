@@ -7,6 +7,16 @@ A public exploration of how the unstructured paper-trail of biopharma R&D (CSRs,
 - **Live demo:** https://pharma-os-gilt.vercel.app
 - **Demo login:** `cloud@biotech.test` / `clouddemo123` — drops you into an org pre-seeded with documents in **English, Chinese, and French** (CSR, patent, IND, regulatory summary)
 
+![Pharma OS landing](docs/screenshots/landing.png)
+
+**Real RAG answer over the seeded data room — Voyage retrieval + Claude generation, every claim cited and deep-linked to its source page:**
+
+![Data room cited answer](docs/screenshots/data-room.png)
+
+**Multilingual classification + structured extraction — Chinese patent, language auto-detected, fields pulled with per-field verbatim source quotes:**
+
+![Chinese patent extraction](docs/screenshots/document-zh.png)
+
 ## What this is
 
 - An **ingestion pipeline** that takes mixed-language documents through parse → chunk → embed → classify → structured field extraction *with per-field source quotes*
