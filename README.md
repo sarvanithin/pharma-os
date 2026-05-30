@@ -1,5 +1,8 @@
 # pharma-os
 
+[![CI](https://github.com/sarvanithin/pharma-os/actions/workflows/ci.yml/badge.svg)](https://github.com/sarvanithin/pharma-os/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A reference architecture for **agentic pharma R&D workflows**: multilingual document ingestion, Inngest-orchestrated agents, citation-grounded outputs, and a tamper-evident audit trail.
 
 A public exploration of how the unstructured paper-trail of biopharma R&D (CSRs, INDs, patents, lab notebooks — frequently in mixed languages) could flow into a structured layer that both teams and intelligent agents can act on. Built to clarify my thinking on the CRO/CDMO data-handoff problem, not as a product.
