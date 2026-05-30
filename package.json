@@ -8,7 +8,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:all": "vitest run",
     "test:e2e": "playwright test",
     "db:reset": "supabase db reset",
     "inngest": "inngest-cli dev -u http://localhost:3000/api/inngest"
@@ -17,7 +20,14 @@
     "onlyBuiltDependencies": [
       "sharp",
       "unrs-resolver",
-      "esbuild"
+      "esbuild",
+      "protobufjs"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp",
+      "unrs-resolver",
+      "esbuild",
+      "protobufjs"
     ]
   },
   "dependencies": {
